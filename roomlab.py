@@ -1,5 +1,46 @@
-#login page
 import streamlit as st
+import os
+import sys
+from pathlib import Path
+
+# Add the parent directory to the Python path to import the engine module
+parent_dir = str(Path(__file__).parent.parent)
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
+
+# Import classes from engine.py
+try:
+    from engine import (
+        CustomerInformation, Config, Preferences, 
+        TokenPayment, GenerateDesign, DesignWorkflow
+    )
+except ImportError:
+    # If engine.py is in the same directory
+    try:
+        from .engine import (
+            CustomerInformation, Config, Preferences, 
+            TokenPayment, GenerateDesign, DesignWorkflow
+        )
+    except ImportError:
+        # Fallback if imports don't work
+        st.error("Could not import engine.py. Make sure it's in the correct location.")
+        # Define placeholder classes for development/testing
+        class CustomerInformation:
+            def __init__(self, name="", lastname="", email="", phone_number="", billing_address=""):
+                self.name = name
+                self.lastname = lastname
+                self.email = email
+                self.phone_number = phone_number
+                self.billing_address = billing_address
+
+        class DesignWorkflow:
+            def __init__(self):
+                self.current_state = "Login"
+            
+            def process_login(self, customer):
+                self.current_state = "PropertySetup"
+                return True
+
 
 def main():
     # Page configuration
@@ -10,7 +51,7 @@ def main():
     )
 
     # Custom CSS to style the app
-    st.markdown("""
+    st.markdown(""" 
     <style>
     .main {
         max-width: 480px !important;
@@ -87,19 +128,57 @@ def main():
     </style>
     """, unsafe_allow_html=True)
     
+    # Initialize session states if they don't exist
+    if "workflow" not in st.session_state:
+        st.session_state.workflow = DesignWorkflow()
+    
+    if "customer" not in st.session_state:
+        st.session_state.customer = None
+    
+    if "current_page" not in st.session_state:
+        st.session_state.current_page = "login"
+    
+    # Main application flow based on current page
+    if st.session_state.current_page == "login":
+        show_login_page()
+    elif st.session_state.current_page == "property_setup":
+        show_property_setup()
+    elif st.session_state.current_page == "preferences":
+        show_preferences()
+    elif st.session_state.current_page == "design":
+        show_design_page()
+
+def show_login_page():
     # Adding some vertical space at the top
     st.markdown("<br><br>", unsafe_allow_html=True)
     
     # Title
     st.markdown('<div class="title">RoomLab</div>', unsafe_allow_html=True)
-    
+
     # Login form
     with st.container():
         # Email/phone input
-        st.text_input("", placeholder="Email address or phone number", key="email")
+        email = st.text_input("", placeholder="Email address or phone number", key="login_email")
         
         # Continue button
-        st.markdown('<button class="button-primary">Continue</button>', unsafe_allow_html=True)
+        if st.button('Continue'):
+            if email:
+                # Create a basic customer object with email
+                st.session_state.customer = CustomerInformation(
+                    name="",
+                    lastname="",
+                    email=email,
+                    phone_number="",
+                    billing_address=""
+                )
+                
+                # Process login in the workflow
+                if hasattr(st.session_state.workflow, 'process_login'):
+                    st.session_state.workflow.process_login(st.session_state.customer)
+                
+                # Move to property setup page
+                st.session_state.current_page = "property_setup"
+                st.rerun()
         
         # Sign up text
         st.markdown('<div class="signup-text">Don\'t have an account? <a href="#" style="color: #4169E1; text-decoration: none;">Sign Up</a></div>', unsafe_allow_html=True)
@@ -141,11 +220,207 @@ def main():
         st.markdown(line_btn, unsafe_allow_html=True)
     
     # Footer
-    st.markdown("""
-    <div class="footer">
-        <a href="#">Terms of Use</a> | <a href="#">Privacy Policy</a>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="footer">RoomLab | <a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a></div>', unsafe_allow_html=True)
+
+def show_property_setup():
+    st.markdown('<div class="title">Set Up Your Property</div>', unsafe_allow_html=True)
+    
+    # Property setup form
+    with st.form("property_setup_form"):
+        real_estate_type = st.selectbox(
+            "Property Type",
+            ["Apartment", "House", "Condo", "Studio", "Office"]
+        )
+        
+        floor = st.number_input("Floor Number", min_value=0, value=1)
+        
+        room_type = st.selectbox(
+            "Room Type",
+            ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Office", "Dining Room"]
+        )
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            length = st.number_input("Length (m)", min_value=1.0, value=4.0)
+            width = st.number_input("Width (m)", min_value=1.0, value=3.0)
+        
+        with col2:
+            height = st.number_input("Height (m)", min_value=1.0, value=2.4)
+            space = st.number_input("Total Area (m²)", min_value=1.0, value=length * width)
+        
+        # Submit button
+        submit_button = st.form_submit_button("Continue to Preferences")
+        
+        if submit_button:
+            # Create Config object
+            config = Config(
+                real_estate_type=real_estate_type,
+                floor=floor,
+                room_type=room_type,
+                space=space,
+                length=length,
+                width=width,
+                height=height
+            )
+            
+            # Store in session state
+            st.session_state.config = config
+            
+            # Update workflow if method exists
+            if hasattr(st.session_state.workflow, 'setup_property'):
+                st.session_state.workflow.setup_property(config)
+            
+            # Move to preferences page
+            st.session_state.current_page = "preferences"
+            st.rerun()
+
+def show_preferences():
+    st.markdown('<div class="title">Your Design Preferences</div>', unsafe_allow_html=True)
+    
+    # Preferences form
+    with st.form("preferences_form"):
+        style = st.selectbox(
+            "Design Style",
+            ["Modern", "Minimalist", "Contemporary", "Traditional", "Industrial", "Scandinavian", "Bohemian"]
+        )
+        
+        family = st.selectbox(
+            "Household Type",
+            ["Single", "Couple", "Small Family", "Large Family", "Shared Space"]
+        )
+        
+        budget = st.slider("Budget ($)", 5000, 100000, 25000, 1000)
+        
+        # Submit button
+        submit_button = st.form_submit_button("Generate Design")
+        
+        if submit_button:
+            # Create Preferences object
+            preferences = Preferences(
+                style=style,
+                family=family,
+                budget=float(budget)
+            )
+            
+            # Store in session state
+            st.session_state.preferences = preferences
+            
+            # Update workflow if method exists
+            if hasattr(st.session_state.workflow, 'setup_preferences'):
+                st.session_state.workflow.setup_preferences(preferences)
+            
+            # Move to design page
+            st.session_state.current_page = "design"
+            st.rerun()
+
+def show_design_page():
+    st.markdown('<div class="title">Your Design</div>', unsafe_allow_html=True)
+    
+    # Check if we have the necessary data to generate a design
+    if all(key in st.session_state for key in ["customer", "config", "preferences"]):
+        # Create a prompt based on the collected data
+        prompt = f"Generate a {st.session_state.preferences.style} design for a {st.session_state.config.room_type} " \
+                f"in a {st.session_state.config.real_estate_type} for a {st.session_state.preferences.family} " \
+                f"with a budget of ${st.session_state.preferences.budget}"
+        
+        # Display the generated prompt
+        st.write("Design Prompt:")
+        st.info(prompt)
+        
+        # Create GenerateDesign object
+        generate_design = GenerateDesign(
+            prompt=prompt,
+            config=st.session_state.config,
+            preferences=st.session_state.preferences,
+            customer=st.session_state.customer
+        )
+        
+        # Store in session state
+        st.session_state.generate_design = generate_design
+        
+        # Generate design if the workflow has the method
+        if hasattr(st.session_state.workflow, 'generate_initial_design'):
+            try:
+                st.session_state.workflow.generate_initial_design(generate_design)
+                st.success("Design generated successfully!")
+            except Exception as e:
+                st.error(f"Error generating design: {str(e)}")
+                # For demonstration, show a placeholder
+                st.image("https://via.placeholder.com/800x600?text=Your+Room+Design", 
+                        caption="Design Preview (Placeholder)")
+        else:
+            # For demonstration purposes when the actual method isn't available
+            st.image("https://via.placeholder.com/800x600?text=Your+Room+Design", 
+                    caption="Design Preview (Placeholder)")
+        
+        # Design modification options
+        st.subheader("Modify Your Design")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Update Wallpaper"):
+                st.session_state.modification = "UpdateWallpaper"
+        
+        with col2:
+            if st.button("Update Flooring"):
+                st.session_state.modification = "UpdateFlooring"
+        
+        col3, col4 = st.columns(2)
+        with col3:
+            if st.button("Update Colors"):
+                st.session_state.modification = "UpdateColors"
+        
+        with col4:
+            if st.button("Update Furniture"):
+                st.session_state.modification = "UpdateFurniture"
+        
+        # Purchase section
+        st.subheader("Purchase Options")
+        if st.button("Purchase Design"):
+            # Show payment form
+            st.session_state.show_payment = True
+        
+        # Show payment form if requested
+        if st.session_state.get("show_payment", False):
+            with st.form("payment_form"):
+                st.write("Payment Information")
+                credit_card = st.text_input("Credit Card Number", placeholder="XXXX-XXXX-XXXX-XXXX")
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    card_name = st.text_input("Name on Card")
+                
+                with col2:
+                    card_date = st.text_input("Expiration Date (MM/YY)")
+                
+                ccv = st.text_input("Security Code (CCV)", max_chars=3)
+                
+                submit_payment = st.form_submit_button("Complete Purchase")
+                
+                if submit_payment:
+                    # Process payment
+                    token_payment = TokenPayment(st.session_state.customer.customer_id)
+                    token_payment.credit_card = credit_card
+                    token_payment.card_name = card_name
+                    token_payment.card_date = card_date
+                    token_payment.ccv = ccv
+                    
+                    # Process payment if workflow has the method
+                    if hasattr(st.session_state.workflow, 'process_purchase'):
+                        try:
+                            st.session_state.workflow.process_purchase(token_payment)
+                            st.success("Payment successful! Your design has been purchased.")
+                        except Exception as e:
+                            st.error(f"Payment error: {str(e)}")
+                    else:
+                        # For demonstration
+                        st.success("Payment successful! Your design has been purchased.")
+    else:
+        st.error("Missing required information. Please complete the previous steps.")
+        if st.button("Return to Login"):
+            st.session_state.clear()
+            st.session_state.current_page = "login"
+            st.rerun()
 
 if __name__ == "__main__":
     main()
