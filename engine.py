@@ -1,249 +1,222 @@
-{
-  "nbformat": 4,
-  "nbformat_minor": 0,
-  "metadata": {
-    "colab": {
-      "provenance": []
-    },
-    "kernelspec": {
-      "name": "python3",
-      "display_name": "Python 3"
-    },
-    "language_info": {
-      "name": "python"
-    }
-  },
-  "cells": [
-    {
-      "cell_type": "code",
-      "source": [
-        "from dataclasses import dataclass\n",
-        "from typing import List, Optional, Dict\n",
-        "from datetime import datetime\n",
-        "from enum import Enum\n",
-        "import uuid\n",
-        "\n",
-        "class CustomerInformation:\n",
-        "    def __init__(self, name: str, lastname: str, email: str, phone_number: str,\n",
-        "                 billing_address: str, facebook_id: str = None, line_id: str = None):\n",
-        "        self.customer_id = str(uuid.uuid4())\n",
-        "        self.name = name\n",
-        "        self.lastname = lastname\n",
-        "        self.email = email\n",
-        "        self.phone_number = phone_number\n",
-        "        self.billing_address = billing_address\n",
-        "        self.facebook_id = facebook_id\n",
-        "        self.line_id = line_id\n",
-        "\n",
-        "    def generate_design(self):\n",
-        "        # Implementation for generating design\n",
-        "        pass\n",
-        "\n",
-        "    def update_profile(self):\n",
-        "        # Implementation for updating profile\n",
-        "        pass\n",
-        "\n",
-        "@dataclass\n",
-        "class Config:\n",
-        "    real_estate_type: str\n",
-        "    floor: int\n",
-        "    room_type: str\n",
-        "    space: float\n",
-        "    length: float\n",
-        "    width: float\n",
-        "    height: float\n",
-        "\n",
-        "    def add_config(self):\n",
-        "        # Implementation for adding configuration\n",
-        "        pass\n",
-        "\n",
-        "@dataclass\n",
-        "class Preferences:\n",
-        "    style: str\n",
-        "    family: str\n",
-        "    budget: float\n",
-        "\n",
-        "    def add_preferences(self):\n",
-        "        # Implementation for adding preferences\n",
-        "        pass\n",
-        "\n",
-        "class TokenPayment:\n",
-        "    def __init__(self, customer_id: str):\n",
-        "        self.customer_id = customer_id\n",
-        "        self.credit_card = None\n",
-        "        self.card_name = None\n",
-        "        self.card_date = None\n",
-        "        self.ccv = None\n",
-        "\n",
-        "    def design_payment(self):\n",
-        "        # Implementation for processing design payment\n",
-        "        pass\n",
-        "\n",
-        "class GenerateDesign:\n",
-        "    def __init__(self, prompt: str, config: Config, preferences: Preferences, customer: CustomerInformation):\n",
-        "        self.generate_id = str(uuid.uuid4())\n",
-        "        self.prompt = prompt\n",
-        "        self.config = config\n",
-        "        self.preferences = preferences\n",
-        "        self.customer = customer\n",
-        "\n",
-        "    def generate_design(self):\n",
-        "        # Implementation for generating design\n",
-        "        pass\n",
-        "\n",
-        "    def add_log(self):\n",
-        "        # Implementation for logging\n",
-        "        pass\n",
-        "\n",
-        "@dataclass\n",
-        "class OutputDesign:\n",
-        "    customer_id: str\n",
-        "    generate_id: str\n",
-        "    style: str\n",
-        "    furniture_name: str\n",
-        "    vendor: str\n",
-        "    price: float\n",
-        "    type: str\n",
-        "    quantity: int\n",
-        "\n",
-        "    def add_furniture(self):\n",
-        "        # Implementation for adding furniture\n",
-        "        pass\n",
-        "\n",
-        "class BOQReport:\n",
-        "    def __init__(self, output_design: OutputDesign):\n",
-        "        self.boq_id = str(uuid.uuid4())\n",
-        "        self.output_design = output_design\n",
-        "\n",
-        "    def add_BOQ(self):\n",
-        "        # Implementation for adding BOQ\n",
-        "        pass\n",
-        "\n",
-        "class VendorInformation:\n",
-        "    def __init__(self, company_name: str, email: str, phone_number: str, billing_address: str):\n",
-        "        self.vendor_id = str(uuid.uuid4())\n",
-        "        self.company_name = company_name\n",
-        "        self.email = email\n",
-        "        self.phone_number = phone_number\n",
-        "        self.billing_address = billing_address\n",
-        "\n",
-        "    def accept_quotation(self):\n",
-        "        # Implementation for accepting quotation\n",
-        "        pass\n",
-        "\n",
-        "class SubscriptionPayment:\n",
-        "    def __init__(self, vendor_id: str):\n",
-        "        self.vendor_id = vendor_id\n",
-        "        self.credit_card = None\n",
-        "        self.card_name = None\n",
-        "        self.card_date = None\n",
-        "        self.ccv = None\n",
-        "\n",
-        "    def subscription_payment(self):\n",
-        "        # Implementation for processing subscription payment\n",
-        "        pass\n",
-        "\n",
-        "class TransactionReport:\n",
-        "    def __init__(self, customer_id: str, generate_id: str, prompt: str, payment_status: str):\n",
-        "        self.customer_id = customer_id\n",
-        "        self.generate_id = generate_id\n",
-        "        self.prompt = prompt\n",
-        "        self.design_picture = None\n",
-        "        self.furniture_list = []\n",
-        "        self.payment_status = payment_status\n",
-        "\n",
-        "    def add_design_order(self):\n",
-        "        # Implementation for adding design order\n",
-        "        pass\n",
-        "\n",
-        "class DesignWorkflow:\n",
-        "    def __init__(self):\n",
-        "        self.current_state = \"Login\"\n",
-        "\n",
-        "    def process_login(self, customer: CustomerInformation):\n",
-        "        # Handle login process\n",
-        "        pass\n",
-        "\n",
-        "    def setup_property(self, config: Config):\n",
-        "        # Handle property setup\n",
-        "        pass\n",
-        "\n",
-        "    def setup_preferences(self, preferences: Preferences):\n",
-        "        # Handle preferences setup\n",
-        "        pass\n",
-        "\n",
-        "    def generate_initial_design(self, generate_design: GenerateDesign):\n",
-        "        # Handle initial design generation\n",
-        "        pass\n",
-        "\n",
-        "    def modify_design(self, modifications: Dict):\n",
-        "        # Handle design modifications\n",
-        "        supported_modifications = ['UpdateWallpaper', 'UpdateFlooring',\n",
-        "                                'UpdateColors', 'UpdateFurniture']\n",
-        "        # Implementation for design modification\n",
-        "        pass\n",
-        "\n",
-        "    def process_purchase(self, token_payment: TokenPayment):\n",
-        "        # Handle purchase process\n",
-        "        pass\n",
-        "\n",
-        "    def generate_boq(self, output_design: OutputDesign):\n",
-        "        # Handle BOQ generation\n",
-        "        pass\n",
-        "\n",
-        "def main():\n",
-        "    # Example usage of the system\n",
-        "    workflow = DesignWorkflow()\n",
-        "\n",
-        "    # Create customer\n",
-        "    customer = CustomerInformation(\n",
-        "        name=\"John\",\n",
-        "        lastname=\"Doe\",\n",
-        "        email=\"john@example.com\",\n",
-        "        phone_number=\"1234567890\",\n",
-        "        billing_address=\"123 Main St\"\n",
-        "    )\n",
-        "\n",
-        "    # Login\n",
-        "    workflow.process_login(customer)\n",
-        "\n",
-        "    # Setup property\n",
-        "    config = Config(\n",
-        "        real_estate_type=\"Apartment\",\n",
-        "        floor=2,\n",
-        "        room_type=\"Living Room\",\n",
-        "        space=50.0,\n",
-        "        length=10.0,\n",
-        "        width=5.0,\n",
-        "        height=3.0\n",
-        "    )\n",
-        "    workflow.setup_property(config)\n",
-        "\n",
-        "    # Setup preferences\n",
-        "    preferences = Preferences(\n",
-        "        style=\"Modern\",\n",
-        "        family=\"Small Family\",\n",
-        "        budget=50000.0\n",
-        "    )\n",
-        "    workflow.setup_preferences(preferences)\n",
-        "\n",
-        "    # Generate initial design\n",
-        "    generate_design = GenerateDesign(\n",
-        "        prompt=\"Modern living room design\",\n",
-        "        config=config,\n",
-        "        preferences=preferences,\n",
-        "        customer=customer\n",
-        "    )\n",
-        "    workflow.generate_initial_design(generate_design)\n",
-        "\n",
-        "if __name__ == \"__main__\":\n",
-        "    main()"
-      ],
-      "metadata": {
-        "id": "CmM_rSGpi98U"
-      },
-      "execution_count": null,
-      "outputs": []
-    }
-  ]
-}
+from dataclasses import dataclass
+from typing import List, Optional, Dict
+from datetime import datetime
+from enum import Enum
+import uuid
+
+class CustomerInformation:
+    def __init__(self, name: str, lastname: str, email: str, phone_number: str,
+                 billing_address: str, facebook_id: str = None, line_id: str = None):
+        self.customer_id = str(uuid.uuid4())
+        self.name = name
+        self.lastname = lastname
+        self.email = email
+        self.phone_number = phone_number
+        self.billing_address = billing_address
+        self.facebook_id = facebook_id
+        self.line_id = line_id
+
+    def generate_design(self):
+    
+        # Implementation for generating design
+        pass
+
+    def update_profile(self):
+        # Implementation for updating profile
+        pass
+
+@dataclass
+class Config:
+    real_estate_type: str
+    floor: int
+    room_type: str
+    space: float
+    length: float
+    width: float
+    height: float
+
+    def add_config(self):
+        # Implementation for adding configuration
+        pass
+
+@dataclass
+class Preferences:
+    style: str
+    family: str
+    budget: float
+
+    def add_preferences(self):
+        # Implementation for adding preferences
+        pass
+
+class TokenPayment:
+    def __init__(self, customer_id: str):
+        self.customer_id = customer_id
+        self.credit_card = None
+        self.card_name = None
+        self.card_date = None
+        self.ccv = None
+
+    def design_payment(self):
+        # Implementation for processing design payment
+        pass
+
+class GenerateDesign:
+    def __init__(self, prompt: str, config: Config, preferences: Preferences, customer: CustomerInformation):
+        self.generate_id = str(uuid.uuid4())
+        self.prompt = prompt
+        self.config = config
+        self.preferences = preferences
+        self.customer = customer
+
+    def generate_design(self):
+        # Implementation for generating design
+        pass
+
+    def add_log(self):
+        # Implementation for logging
+        pass
+
+@dataclass
+class OutputDesign:
+    customer_id: str
+    generate_id: str
+    style: str
+    furniture_name: str
+    vendor: str
+    price: float
+    type: str
+    quantity: int
+
+    def add_furniture(self):
+        # Implementation for adding furniture
+        pass
+
+class BOQReport:
+    def __init__(self, output_design: OutputDesign):
+        self.boq_id = str(uuid.uuid4())
+        self.output_design = output_design
+
+    def add_BOQ(self):
+        # Implementation for adding BOQ
+        pass
+
+class VendorInformation:
+    def __init__(self, company_name: str, email: str, phone_number: str, billing_address: str):
+        self.vendor_id = str(uuid.uuid4())
+        self.company_name = company_name
+        self.email = email
+        self.phone_number = phone_number
+        self.billing_address = billing_address
+
+    def accept_quotation(self):
+        # Implementation for accepting quotation
+        pass
+
+class SubscriptionPayment:
+    def __init__(self, vendor_id: str):
+        self.vendor_id = vendor_id
+        self.credit_card = None
+        self.card_name = None
+        self.card_date = None
+        self.ccv = None
+
+    def subscription_payment(self):
+        # Implementation for processing subscription payment
+        pass
+
+class TransactionReport:
+    def __init__(self, customer_id: str, generate_id: str, prompt: str, payment_status: str):
+        self.customer_id = customer_id
+        self.generate_id = generate_id
+        self.prompt = prompt
+        self.design_picture = None
+        self.furniture_list = []
+        self.payment_status = payment_status
+
+    def add_design_order(self):
+        # Implementation for adding design order
+        pass
+
+class DesignWorkflow:
+    def __init__(self):
+        self.current_state = "Login"
+        
+    def process_login(self, customer: CustomerInformation):
+        # Handle login process
+        pass
+
+    def setup_property(self, config: Config):
+        # Handle property setup
+        pass
+
+    def setup_preferences(self, preferences: Preferences):
+        # Handle preferences setup
+        pass
+
+    def generate_initial_design(self, generate_design: GenerateDesign):
+        # Handle initial design generation
+        pass
+
+    def modify_design(self, modifications: Dict):
+        # Handle design modifications
+        supported_modifications = ['UpdateWallpaper', 'UpdateFlooring', 
+                                'UpdateColors', 'UpdateFurniture']
+        # Implementation for design modification
+        pass
+
+    def process_purchase(self, token_payment: TokenPayment):
+        # Handle purchase process
+        pass
+
+    def generate_boq(self, output_design: OutputDesign):
+        # Handle BOQ generation
+        pass
+
+def main():
+    # Example usage of the system
+    workflow = DesignWorkflow()
+    
+    # Create customer
+    customer = CustomerInformation(
+        name="John",
+        lastname="Doe",
+        email="john@example.com",
+        phone_number="1234567890",
+        billing_address="123 Main St"
+    )
+    
+    # Login
+    workflow.process_login(customer)
+    
+    # Setup property
+    config = Config(
+        real_estate_type="Apartment",
+        floor=2,
+        room_type="Living Room",
+        space=50.0,
+        length=10.0,
+        width=5.0,
+        height=3.0
+    )
+    workflow.setup_property(config)
+    
+    # Setup preferences
+    preferences = Preferences(
+        style="Modern",
+        family="Small Family",
+        budget=50000.0
+    )
+    workflow.setup_preferences(preferences)
+    
+    # Generate initial design
+    generate_design = GenerateDesign(
+        prompt="Modern living room design",
+        config=config,
+        preferences=preferences,
+        customer=customer
+    )
+    workflow.generate_initial_design(generate_design)
+
+if __name__ == "__main__":
+    main()
